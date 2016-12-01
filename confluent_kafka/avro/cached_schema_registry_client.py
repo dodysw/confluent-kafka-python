@@ -44,7 +44,7 @@ class CachedSchemaRegistryClient(object):
     @:param: url: url to schema registry
     """
 
-    def __init__(self, url, max_schemas_per_subject=1000):
+    def __init__(self, url, req=None, max_schemas_per_subject=1000):
         """Construct a client by passing in the base URL of the schema registry server"""
 
         self.url = url.rstrip('/')
@@ -56,6 +56,7 @@ class CachedSchemaRegistryClient(object):
         self.id_to_schema = defaultdict(dict)
         # subj => { schema => version }
         self.subject_to_schema_versions = defaultdict(dict)
+        self.requests = requests if req is None else req
 
     def _send_request(self, url, method='GET', body=None, headers=None):
         if body:
@@ -71,13 +72,13 @@ class CachedSchemaRegistryClient(object):
             for header_name in headers:
                 _headers[header_name] = headers[header_name]
         if method == 'GET':
-            response = requests.get(url, headers=_headers)
+            response = self.requests.get(url, headers=_headers)
         elif method == 'POST':
-            response = requests.post(url, body, headers=_headers)
+            response = self.requests.post(url, body, headers=_headers)
         elif method == 'PUT':
-            response = requests.put(url, body, headers=_headers)
+            response = self.requests.put(url, body, headers=_headers)
         elif method == 'DELETE':
-            response = requests.delete(url, headers=_headers)
+            response = self.requests.delete(url, headers=_headers)
         else:
             raise ClientError("Invalid HTTP request type")
 

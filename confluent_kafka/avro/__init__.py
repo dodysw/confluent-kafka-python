@@ -77,9 +77,10 @@ class AvroProducer(Producer):
             raise ValueError("Missing parameter: schema.registry.url")
         schem_registry_url = config["schema.registry.url"]
         del config["schema.registry.url"]
+        req = config.pop("schema.registry.requests", None)
 
         super(AvroProducer, self).__init__(config)
-        self._serializer = MessageSerializer(CachedSchemaRegistryClient(url=schem_registry_url))
+        self._serializer = MessageSerializer(CachedSchemaRegistryClient(url=schem_registry_url, req=req))
         self._key_schema = default_key_schema
         self._value_schema = default_value_schema
 
@@ -133,9 +134,10 @@ class AvroConsumer(Consumer):
             raise ValueError("Missing parameter: schema.registry.url")
         schem_registry_url = config["schema.registry.url"]
         del config["schema.registry.url"]
+        req = config.pop("schema.registry.requests", None)
 
         super(AvroConsumer, self).__init__(config)
-        self._serializer = MessageSerializer(CachedSchemaRegistryClient(url=schem_registry_url))
+        self._serializer = MessageSerializer(CachedSchemaRegistryClient(url=schem_registry_url, req=req))
 
     def poll(self, timeout=None):
         """
