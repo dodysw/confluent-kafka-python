@@ -29,7 +29,7 @@
 /**
  * librdkafka feature detection
  */
-#if RD_KAFKA_VERSION >= 0x00090300
+#ifdef RD_KAFKA_V_TIMESTAMP
 #define HAVE_PRODUCEV  1 /* rd_kafka_producev() */
 #endif
 
@@ -189,6 +189,26 @@ void CallState_resume (CallState *cs);
  * @brief Indicate that call crashed.
  */
 void CallState_crash (CallState *cs);
+
+
+/****************************************************************************
+ *
+ *
+ * TopicPartition
+ *
+ *
+ *
+ *
+ ****************************************************************************/
+typedef struct {
+	PyObject_HEAD
+	char *topic;
+	int   partition;
+	int64_t offset;
+	PyObject *error;
+} TopicPartition;
+
+extern PyTypeObject TopicPartitionType;
 
 
 /****************************************************************************
